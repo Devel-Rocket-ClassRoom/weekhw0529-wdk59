@@ -5,7 +5,7 @@
 #include <time.h>
 using namespace std;
 
-void Day0529_Homework02_Run()
+void Homework02_Run()
 {
 	// 랜덤 시드 설정
 	srand(time(0));

@@ -71,7 +71,7 @@ struct CardPocket
 	}
 };
 
-void Day0529_Homework02_Run();
+void Homework02_Run();
 
 void Day0529_BlackJack_Play(int* CardPool);
 
