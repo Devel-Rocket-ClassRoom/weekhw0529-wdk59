@@ -1,4 +1,4 @@
-#include "Day0529_Homework02.h"
+﻿#include "Day0529_Homework02.h"
 
 #include <iostream>
 #include <stdlib.h>
@@ -65,7 +65,7 @@ void Day0529_BlackJack_Play(int* CardPool)
 	{
 		// 플레이어 턴 진행
 		bIsPlayerBurst = Day0529_PlayTurn(PlayerCardPocket, bIsPlayerTurn, CardPool);
-		if (bIsPlayerBurst)
+		if (!bIsPlayerBurst)
 		{
 			// 플레이어 버스트 나지 않으면 딜러 턴 진행
 			bIsDealerBurst = Day0529_PlayTurn(DealerCardPocket, !bIsPlayerTurn, CardPool);
@@ -88,11 +88,25 @@ int Day0529_GameReady(int* CardPool, CardPocket& Dealer, CardPocket& Player)
 	for (int i = 2; i; i--)
 	{
 		TempCard = Day0529_DrawCard(CardPool);
-		Player.Score_ExceptAce += (TempCard > 9 ? 10 : TempCard);
+		if (TempCard != 1)
+		{
+			Player.Score_ExceptAce += (TempCard > 9 ? 10 : TempCard);
+		}
+		else
+		{
+			Player.AceCount++;
+		}
 		PlayerDraw[2 - i] = Day0529_GetCardNumberName(TempCard);
 
 		TempCard = Day0529_DrawCard(CardPool);
-		Dealer.Score_ExceptAce += (TempCard > 9 ? 10 : TempCard);
+		if (TempCard != 1)
+		{
+			Dealer.Score_ExceptAce += (TempCard > 9 ? 10 : TempCard);
+		}
+		else
+		{
+			Dealer.AceCount++;
+		}
 		DealerDraw[2 - i] = Day0529_GetCardNumberName(TempCard);
 	}
 
@@ -169,7 +183,7 @@ bool Day0529_CheckCardPool(int* CardPool)
 // 턴 주인 안내
 void Day0529_PrintTurnOwner(bool bIsPlayerTurn)
 {
-	printf("지금은 %s의 턴입니다.\n", bIsPlayerTurn ? "플레이어" : "딜러");
+	printf("\n지금은 %s의 턴입니다.\n", bIsPlayerTurn ? "플레이어" : "딜러");
 }
 
 // 플레이 턴: 카드 뽑고 히트, 스탠드 선택. 버스트 여부 반환
@@ -201,24 +215,23 @@ bool Day0529_PlayTurn(CardPocket& InCardPocket, bool bIsPlayerTurn, int* CardPoo
 			else if (InputAction == 2)
 			{
 				bIsStand = true;
-				printf("플레이어 턴 종료. 딜러가 카드를 뽑습니다.");
+				printf("플레이어 턴 종료. 딜러가 카드를 뽑습니다.\n");
 			}
 			else
 			{
-				printf("잘못된 입력입니다. 다시 입력해주세요.");
+				printf("잘못된 입력입니다. 다시 입력해주세요.\n");
 			}
 		}
 	}
 	// 딜러 턴
 	else
 	{
-		printf("Dealer: %d\n", InCardPocket.TotalScore());
+		printf("Dearler: %d\n\n", InCardPocket.TotalScore());
 		while (InCardPocket.TotalScore() < Day0529_DEALER_SOFT_SCORE)
 		{
 			TempCard = Day0529_DrawCard(CardPool);
 			printf("뽑은 카드: %s\n", Day0529_GetCardNumberName(TempCard).c_str());
 			Day0529_GetCard(InCardPocket, TempCard);
-			printf("Dealer: %d\n", InCardPocket.TotalScore());
 		}
 		bIsBurst = Day0529_CheckBurst(InCardPocket);
 	}
@@ -301,10 +314,12 @@ void Day0529_DetermineWinner(CardPocket& PlayerPocket, CardPocket& DealerPocket,
 		// 둘 중 하나라도 버스트
 		if (PlayerTotal > Day0529_WINNING_SCORE)
 		{
+			printf("버스트!!!!!\n");
 			Winner = 2;
 		}
 		else if (DealerTotal > Day0529_WINNING_SCORE)
 		{
+			printf("버스트!!!!!\n");
 			Winner = 1;
 		}
 		// 둘 다 버스트 안 당함
